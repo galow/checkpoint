@@ -12,12 +12,14 @@
 
 #include <stack>
 #include <cstdlib>
-#include<cstdio>
+#include <cstdio>
 #include <ctime>
 #include <climits>
 
 #include "basicmatrix.h"
 #include "basicsequence.h"
+#include "helpfun.h"
+
 
 /********************preparation***********************************************/
 //define a interaciotn-class for each j->i interaciton,like (-1,0,0,1,0,0,0,1)
@@ -45,32 +47,10 @@ public:
 };
 
 
-//clear the stack
-template<typename T>
-void clearStack(std::stack<T> &theStack)
-{ 
-  while ( ! theStack.empty() ){
-     theStack.pop();
-  }
-}
-
-//gennerate string list
-std::string *genStrList(int num)
-{
-  std::string * st = new std::string[num];
-  std::string suffix = ".txt";
-  //std::string dir = "/full/";
-  std::string str;
-  for(int i = 0; i < num; ++i){
-    str = std::to_string(i+1);
-    st[i] = str + suffix;
-  }
-  return st;
-}
 
 /*******************************************************************************/
 
-/********************find the property interaction*********************************/
+/********************find the appropriate interaction*********************************/
 //check the given interaction wheather contents the dynamical-process 
 bool logical_exp(MyInteraction &interaction ,int *state,int inNode,int periods,int nodeNum){
   for(int t = 0;t < periods-1;t++){
