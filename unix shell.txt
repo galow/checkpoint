@@ -1,0 +1,76 @@
+sudo apt-get install *
+
+ls -a
+mkdir
+rm
+rmdir
+rm -rf
+cd
+history
+cp
+clear
+pwd
+
+------------it基本使用说明---------
+
+
+初始化：
+git init
+添加/删除文件：
+git add *
+git add -u
+git add !$
+git add '*.tx-t'
+git add octofamily/octodog.txt
+git rm '*.txt'
+注释：
+git commit -m "version.."
+查看状态：
+git status
+git status | more
+git log
+远程同步：
+git remote rm origin
+git remote add origin git@github.com:galow/try_git.git
+git push -u origin master
+git push
+取回：
+git pull origin master
+查看和上次区别：
+git diff HEAD
+git diff --staged
+新建一个branch：
+git branch clean_up
+git checkout clean_up
+切换到master的branch：
+git checkout master
+合并branch和删除branch：
+git merge clean_up
+git branch -d clean_up
+
+
+git checkout *(commit) -- *(filename)
+git checkout HEAD -- *(filename)
+git reset octofamily/octodog.txt
+git checkout -- octocat.txt
+
+git branch
+
+git ls-files .
+
+
+galow
+mybzhy&github1234
+
+
+touch README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/galow/checkpoint-2013-07-20.git
+git push -u origin master
+
+git remote add origin https://github.com/galow/checkpoint-2013-07-20.git
+git push -u origin master
+
+-------------git基本使用说明-------------------------
