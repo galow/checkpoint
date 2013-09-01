@@ -26,6 +26,7 @@ public:
   Sequence & operator=(const Sequence &);//copy operator
   ~Sequence(){delete sequence;}
   void reset();
+  void set(int position,int num);
   //change to next sequence
   void nextSequence();
   //cast sequence to integer
@@ -94,6 +95,13 @@ bool Sequence::nextCand(int & s){
 void Sequence::reset(){
   for(int i = 0;i < sequenceLength;i++)
     sequence[i] = 0;
+}
+
+void Sequence::set(int position,int num){
+  if(num > setSize || num < 0 || position < 0 || position >= sequenceLength)
+    std::cout<<"error:fail to change sequence"<<std::endl;
+  else
+    sequence[position] = num;
 }
 
 Sequence::operator int () const{

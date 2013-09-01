@@ -21,39 +21,6 @@
 #include "helpfun.h"
 
 
-/********************preparation***********************************************/
-//define a interaciotn-class for each j->i interaciton,like (-1,0,0,1,0,0,0,1)
-class MyInteraction : public Sequence{
-public:
-  MyInteraction():Sequence(){
-  }
-  MyInteraction(int sl):Sequence(sl,3){
-  }
-  MyInteraction(const MyInteraction &seq):Sequence(seq){//copy constructor
-  }
-  ~MyInteraction(){~Sequence();}
-  MyInteraction & operator=(const MyInteraction &seq){//copy operator
-    Sequence::operator=(seq);
-    return *this;
-  }
-  int operator [](int i) const {
-    return Sequence::operator[](i)-1;
-  }
-  friend std::ostream& operator << (std::ostream& os,const MyInteraction& seq){
-    for(int i = 0;i < seq.sequenceLength;i++)
-      os<<std::setw(4)<<seq[i];
-    return os;
-  }
-  int getLength(){
-    int count = 0;
-    for(int i = 0; i < Sequence::sequenceLength; ++i)
-      if(operator[](i) != 0) count++;
-    return count;
-  }
-};
-
-
-
 /*******************************************************************************/
 
 /********************find the appropriate interaction*********************************/
@@ -96,6 +63,7 @@ void sNetworkBFS(char * fileName,int nodeNum,int duration){
   for(int n = 0;n < nodeNum;n++){ //for every onde
     int minInteractSize = nodeNum,tempSize;
     myfile.open(filenames[n]);
+    
     count = 0;
     for(int t = 0;t < allSeq;t++){ //for every sequence
       //if it contents logical_expresison and not self activation
@@ -118,7 +86,7 @@ void sNetworkBFS(char * fileName,int nodeNum,int duration){
       seq.nextSequence();
     }
     //print the minimum interaction
-    myfile<<std::endl;
+    myfile<<100<<std::endl;
     for(int i = 0;i < count;i++){
       myfile<<minInteraction.top()<<std::endl;
       std::cout<<minInteraction.top()<<std::endl;
