@@ -44,6 +44,12 @@ public:
       os<<std::setw(4)<<seq[i];
     return os;
   }
+  int getLength(){
+    int count = 0;
+    for(int i = 0; i < Sequence::sequenceLength; ++i)
+      if(operator[](i) != 0) count++;
+    return count;
+  }
 };
 
 
@@ -94,7 +100,7 @@ void sNetworkBFS(char * fileName,int nodeNum,int duration){
     for(int t = 0;t < allSeq;t++){ //for every sequence
       //if it contents logical_expresison and not self activation
       if(logical_exp(seq,state,n,duration,nodeNum) /*&& seq[n] != 1*/){
-	myfile<<seq<<std::endl;
+	if(seq.getLength() < nodeNum/2) myfile<<seq<<std::endl;
 	//pick the minimum interaction
   	tempSize = 0;
   	for(int i = 0;i < nodeNum;i++)
