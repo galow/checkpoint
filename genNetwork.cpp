@@ -35,12 +35,14 @@ MyInteraction getMinInteraction(MyInteraction & seq,std::vector<MyInteraction> &
 //generate some suitable network
 void genNetwork(int nodeNum)
 {
+  int genNetNum = 100;
+
   std::vector<MyInteraction> seqTable;
   std::vector<MyInteraction> seqTable_min;
   MyInteraction seqTemp(nodeNum);
   std::string *filenames = genStrList(nodeNum);
-  std::string *filenames_full = genStrList(10,"_full");
-  std::string *filenames_min = genStrList(10,"_min");
+  std::string *filenames_full = genStrList(genNetNum,"_full");
+  std::string *filenames_min = genStrList(genNetNum,"_min");
   std::ifstream inFile;
   std::ofstream outFile_full;
   std::ofstream outFile_min;
@@ -74,9 +76,9 @@ void genNetwork(int nodeNum)
     }
     inFile.close();
     int seqTable_size = seqTable.size();
-    int *randNum = genRandNumList(0,seqTable_size,10);
+    int *randNum = genRandNumList(0,seqTable_size,genNetNum);
     //write network to files
-    for(int i = 0; i < 10; ++i){
+    for(int i = 0; i < genNetNum; ++i){
       outFile_full.open(filenames_full[i],std::ios::out | std::ios::app);
       outFile_full<<seqTable[randNum[i]]<<std::endl;
       outFile_full.close();

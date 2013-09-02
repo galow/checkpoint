@@ -21,6 +21,7 @@
 
 #include "basicmatrix.h"
 #include "basicsequence.h"
+#include "helpfun.h"
 
 /******************************calculate the dynamical network************************/
 
@@ -279,13 +280,6 @@ double* calBD(int *network,int size)
 /********************************************************************************************/
 
 /**********************************define main function**************************************/
-template <typename T>
-void swap2(T& a,T& b){
-  T temp;
-  temp = a;
-  a = b;
-  b = temp;
-}
 
 void mainfunction(int *network,int *minNetwork,int size)
 {
@@ -327,6 +321,18 @@ void mainfunction(int *network,int *minNetwork,int size)
   for(int i = 0; i < size; ++i){
     std::cout<<node_num[i]<<" "<<bd[i]<<" "<<supp_node[i]<<std::endl;
   }
+  //calculate the correlation
+  double correlation = 0;
+  double bd_total = 0;
+  double indegree_total = 0;
+  for(int i = 0; i < size; ++i){
+    bd_total += abs2(bd[i]);
+    indegree_total += abs2(supp_node[i]);
+  }
+  for(int i = 0; i < size; ++i){
+    correlation += (abs2(bd[i])/bd_total) * (supp_node[i]/indegree_total);
+  }
+  std::cout<<"correlation = "<<correlation<<std::endl;
 }
 
 
@@ -344,11 +350,19 @@ int main(int argc,char * argv[])
   int nodeNum = atoi(argv[3]);
   std::clock_t c_start = std::clock();
   
-  int *network = genMatrix(argv[1],nodeNum,nodeNum);
-  int *minNetwork = genMatrix(argv[2],nodeNum,nodeNum);
+  // int *network = genMatrix(argv[1],nodeNum,nodeNum);
+  // int *minNetwork = genMatrix(argv[2],nodeNum,nodeNum);
 
-  mainfunction(network,minNetwork,nodeNum);
-
+  // mainfunction(network,minNetwork,nodeNum);
+  int genNetNum = 100;
+  std::string *filenames_full = genStrList(genNetNum,"_full");
+  std::string *filenames_min = genStrList(genNetNum,"_min");
+  for(int i = 0; i < genNetNum; ++i){
+    int *network = genMatrix(const_cast<char*>(filenames_full[i].c_str()),nodeNum,nodeNum);
+    int *minNetwork = genMatrix(const_cast<char*>(filenames_min[i].c_str()),nodeNum,nodeNum);
+    mainfunction(network,minNetwork,nodeNum);
+    std::cout<<std::endl;
+  }
   std::clock_t c_end = std::clock();
   std::cout<<"It costs : "<<(c_end-c_start)<<" ms."<<std::endl;
 }

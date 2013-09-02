@@ -109,4 +109,18 @@ int *genRandNumList(int from ,int to,int count){
   return result;
 }
 
+template <typename T>
+void swap2(T& a,T& b){
+  T temp;
+  temp = a;
+  a = b;
+  b = temp;
+}
+
+template <typename T>
+T abs2(T& a){
+  if(a < 0.0) return -a;
+  else return a;
+}
+
 #endif
