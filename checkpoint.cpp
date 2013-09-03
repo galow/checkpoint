@@ -286,7 +286,7 @@ void mainfunction(int *network,int *minNetwork,int size)
   //calculate the b w
   auto dn = genDN(network,size);
   auto bw = calmaxBW(dn); //76,272
-  std::cout<<"B= "<<bw.first<<" W= "<<bw.second<<std::endl;
+  //std::cout<<"B= "<<bw.first<<" W= "<<bw.second<<std::endl;
 
   //calculate the supplement node
   int* supp_node = new int [size];
@@ -318,21 +318,21 @@ void mainfunction(int *network,int *minNetwork,int size)
   }
   
   //print the result
-  for(int i = 0; i < size; ++i){
-    std::cout<<node_num[i]<<" "<<bd[i]<<" "<<supp_node[i]<<std::endl;
-  }
+  // for(int i = 0; i < size; ++i){
+  //   std::cout<<node_num[i]<<" "<<bd[i]<<" "<<supp_node[i]<<std::endl;
+  // }
   //calculate the correlation
   double correlation = 0;
   double bd_total = 0;
   double indegree_total = 0;
-  for(int i = 0; i < size; ++i){
+  for(int i = 1; i < size; ++i){
     bd_total += abs2(bd[i]);
     indegree_total += abs2(supp_node[i]);
   }
-  for(int i = 0; i < size; ++i){
+  for(int i = 1; i < size; ++i){
     correlation += (abs2(bd[i])/bd_total) * (supp_node[i]/indegree_total);
   }
-  std::cout<<"correlation = "<<correlation<<std::endl;
+  std::cout<<indegree_total<<" "<<correlation<<std::endl;
 }
 
 
@@ -354,14 +354,13 @@ int main(int argc,char * argv[])
   // int *minNetwork = genMatrix(argv[2],nodeNum,nodeNum);
 
   // mainfunction(network,minNetwork,nodeNum);
-  int genNetNum = 100;
+  int genNetNum = 99;
   std::string *filenames_full = genStrList(genNetNum,"_full");
   std::string *filenames_min = genStrList(genNetNum,"_min");
   for(int i = 0; i < genNetNum; ++i){
     int *network = genMatrix(const_cast<char*>(filenames_full[i].c_str()),nodeNum,nodeNum);
     int *minNetwork = genMatrix(const_cast<char*>(filenames_min[i].c_str()),nodeNum,nodeNum);
     mainfunction(network,minNetwork,nodeNum);
-    std::cout<<std::endl;
   }
   std::clock_t c_end = std::clock();
   std::cout<<"It costs : "<<(c_end-c_start)<<" ms."<<std::endl;

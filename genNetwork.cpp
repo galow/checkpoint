@@ -35,7 +35,7 @@ MyInteraction getMinInteraction(MyInteraction & seq,std::vector<MyInteraction> &
 //generate some suitable network
 void genNetwork(int nodeNum)
 {
-  int genNetNum = 100;
+  int genNetNum = 99;
 
   std::vector<MyInteraction> seqTable;
   std::vector<MyInteraction> seqTable_min;

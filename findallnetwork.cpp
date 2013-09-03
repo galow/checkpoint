@@ -68,7 +68,7 @@ void sNetworkBFS(char * fileName,int nodeNum,int duration){
     for(int t = 0;t < allSeq;t++){ //for every sequence
       //if it contents logical_expresison and not self activation
       if(logical_exp(seq,state,n,duration,nodeNum) /*&& seq[n] != 1*/){
-	if(seq.getLength() < nodeNum/2) myfile<<seq<<std::endl;
+	if(seq.getLength() < nodeNum/3*2) myfile<<seq<<std::endl;
 	//pick the minimum interaction
   	tempSize = 0;
   	for(int i = 0;i < nodeNum;i++)

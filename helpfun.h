@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stack>
 #include <string>
+#include <ctime>
 
 //define a interaciotn-class for each j->i interaciton,like (-1,0,0,1,0,0,0,1)
 class MyInteraction : public Sequence{
@@ -102,7 +103,8 @@ std::string *genStrList(int num,std::string suffix)
 
 //generate a random num
 int *genRandNumList(int from ,int to,int count){
-  srand(1);
+  //srand(1);
+  srand((unsigned)time(0));
   int *result = new int [count];
   for (int i = 0; i < count; ++i)
     result[i] = rand() % (to - from) + from;
