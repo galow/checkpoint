@@ -325,14 +325,17 @@ void mainfunction(int *network,int *minNetwork,int size)
   double correlation = 0;
   double bd_total = 0;
   double indegree_total = 0;
+  double deviation = 0;
   for(int i = 1; i < size; ++i){
     bd_total += abs2(bd[i]);
     indegree_total += abs2(supp_node[i]);
   }
+  
   for(int i = 1; i < size; ++i){
     correlation += (abs2(bd[i])/bd_total) * (supp_node[i]/indegree_total);
+    deviation += (abs2(supp_node[i]) - indegree_total/size)*(abs2(supp_node[i]) - indegree_total/size);
   }
-  std::cout<<indegree_total<<" "<<correlation<<std::endl;
+  std::cout<<sqrt(deviation)/indegree_total<<" "<<correlation<<std::endl;
 }
 
 
@@ -354,7 +357,7 @@ int main(int argc,char * argv[])
   // int *minNetwork = genMatrix(argv[2],nodeNum,nodeNum);
 
   // mainfunction(network,minNetwork,nodeNum);
-  int genNetNum = 99;
+  int genNetNum = 1000;
   std::string *filenames_full = genStrList(genNetNum,"_full");
   std::string *filenames_min = genStrList(genNetNum,"_min");
   for(int i = 0; i < genNetNum; ++i){
