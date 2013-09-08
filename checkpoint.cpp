@@ -19,9 +19,9 @@
 #include <ctime>
 #include <climits>
 
-#include "basicmatrix.h"
-#include "basicsequence.h"
-#include "helpfun.h"
+#include "./header/basicmatrix.h"
+#include "./header/basicsequence.h"
+#include "./header/helpfun.h"
 
 /******************************calculate the dynamical network************************/
 
@@ -207,8 +207,8 @@ double* calBD(int *network,int size)
   double *TF_B = new double [stateSum];
   double *TF_D = new double [stateSum];
   
-  calDeltaBRec(stateNetwork,76,TF_B);
-  calDeltaDRec(stateNetwork,76,TF_D);
+  calDeltaBRec(stateNetwork,272,TF_B);
+  calDeltaDRec(stateNetwork,272,TF_D);
   //statistics the checkpoint
   double *weight_b1 = new double[size];
   double *weight_b2 = new double[size];
@@ -286,7 +286,7 @@ void mainfunction(int *network,int *minNetwork,int size)
   //calculate the b w
   auto dn = genDN(network,size);
   auto bw = calmaxBW(dn); //76,272
-  //std::cout<<"B= "<<bw.first<<" W= "<<bw.second<<std::endl;
+  //std::cout<<"B = "<<bw.first<<" W = "<<bw.second<<std::endl;
 
   //calculate the supplement node
   int* supp_node = new int [size];
@@ -295,15 +295,17 @@ void mainfunction(int *network,int *minNetwork,int size)
   int *supp_network = subMatrix(network,minNetwork,size,size);
   for(int i = 0; i < size; ++i){
     for(int j = 0; j < size; ++j){
-      if(supp_network[i*size+j] != 0)
-	supp_node[i] ++;
+      if(supp_network[i*size+j] != 0){
+	supp_node[j] ++; //outdegree!!!
+	supp_node[i] ++; //indegree!!!
+      }
     }
   }
 
   //calculate the b d
   int *node_num = new int[size];
   for(int i = 0; i < size; ++i){
-    node_num[i] = i+1;
+    node_num[i] = i+1; //set node index
   }
   double *bd = calBD(network,size);
   //pop sort
@@ -319,7 +321,7 @@ void mainfunction(int *network,int *minNetwork,int size)
   
   //print the result
   // for(int i = 0; i < size; ++i){
-  //   std::cout<<node_num[i]<<" "<<bd[i]<<" "<<supp_node[i]<<std::endl;
+  //   std::cout<<std::setw(2)<<node_num[i]<<" "<<std::setw(10)<<bd[i]<<" "<<supp_node[i]<<std::endl;
   // }
   //calculate the correlation
   double correlation = 0;
@@ -327,15 +329,16 @@ void mainfunction(int *network,int *minNetwork,int size)
   double indegree_total = 0;
   double deviation = 0;
   for(int i = 1; i < size; ++i){
-    bd_total += abs2(bd[i]);
-    indegree_total += abs2(supp_node[i]);
+    bd_total += bd[i] * bd[i];
+    indegree_total += supp_node[i] * supp_node[i];
   }
   
   for(int i = 1; i < size; ++i){
-    correlation += (abs2(bd[i])/bd_total) * (supp_node[i]/indegree_total);
-    deviation += (abs2(supp_node[i]) - indegree_total/size)*(abs2(supp_node[i]) - indegree_total/size);
+    correlation += (abs2(bd[i])/sqrt(bd_total)) * (supp_node[i]/sqrt(indegree_total));
+    deviation += supp_node[i] * supp_node[i];
   }
-  std::cout<<sqrt(deviation)/indegree_total<<" "<<correlation<<std::endl;
+  if(indegree_total <= 16) std::cout<<sqrt(deviation)/indegree_total<<" "<<correlation<<std::endl;
+  //else std::cout<<0.1<<" "<<correlation<<std::endl;
 }
 
 
