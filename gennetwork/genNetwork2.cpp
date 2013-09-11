@@ -9,6 +9,8 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <map>
+#include <unordered_map>
 
 #include <cmath>
 #include <stack>
@@ -37,17 +39,15 @@ void genNetwork(int nodeNum)
 {
   int genNetNum = 10,count = 0;
 
-  std::vector<MyInteraction> *seqTable = new std::vector<MyInteraction> [nodeNum];
-  std::vector<MyInteraction> *seqTable_min = new std::vector<MyInteraction> [nodeNum];
+  std::unordered_multimap<int,MyInteraction> *seqTable = 
+    new std::unordered_multimap<int,MyInteraction> [nodeNum];
+  std::map<int,MyInteraction> *seqTable_min = new std::map<int,MyInteraction> [nodeNum];
+  
   MyInteraction seqTemp(nodeNum);
   std::string *filenames = genStrList(nodeNum,"_v1");
-  std::string *filenames_full = genStrList(genNetNum,"_full");
-  std::string *filenames_min = genStrList(genNetNum,"_min");
   std::ifstream inFile;
-  std::ofstream outFile_full;
-  std::ofstream outFile_min;
 
-  int temp;
+  int temp,index;
   for(int n = 0; n < nodeNum; ++n){
     inFile.open(filenames[n]);
     //read all possible network from file
@@ -58,28 +58,37 @@ void genNetwork(int nodeNum)
 	inFile>>temp;
 	seqTemp.set(i,temp);
       }
-      seqTable[n].push_back(seqTemp);
+      seqTable[n].insert(std::unordered_multimap<int,MyInteraction>::value_type
+			 (seqTemp.getLength(),seqTemp));
     }
     //read all min network from file
+    index = 0;
     while(inFile>>temp){
       seqTemp.set(0,temp);
       for(int i = 1; i < nodeNum; ++i){
 	inFile>>temp;
 	seqTemp.set(i,temp);
       }
-      seqTable_min[n].push_back(seqTemp);
+      seqTable_min[n].insert(std::map<int,MyInteraction>::value_type
+			     (index,seqTemp));
+      index++;
     }
     inFile.close();   
   }
+
+  //find the appropriate network.total_edge <= ?
+  for(int n = 0; n < 1; ++n){
+    auto its = seqTable[n].equal_range(5);
+    for (auto it = its.first; it != its.second; ++it)
+      std::cout<<it->second<<std::endl;
+  }
+
   for(int i = 0; i < nodeNum; ++i){
     seqTable[i].clear();
     seqTable_min[i].clear();
   }
   
-  //find the appropriate network.total_edge <= ?
-  while(count < genNetNum){
-    
-  }
+  
 }
 
 int main(int argc, char *argv[])
