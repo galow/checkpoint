@@ -23,31 +23,23 @@
 #include "../header/basicsequence.h"
 #include "../header/helpfun.h"
 
-MyInteraction getMinInteraction(MyInteraction & seq,std::vector<MyInteraction> &seqTable_min)
-{
-  int index = 0;
-  int size = seqTable_min.size();
-  for(; index < size; ++index){
-    if(seq.isSubSeq(seqTable_min[index]))
-       return seqTable_min[index];
-  }
-  return seq;
-}
-
 //generate some suitable network
 void genNetwork(int nodeNum)
 {
-  int genNetNum = 10,count = 0;
+  int genNetNum = 10;
 
   std::unordered_multimap<int,MyInteraction> *seqTable = 
     new std::unordered_multimap<int,MyInteraction> [nodeNum];
-  std::map<int,MyInteraction> *seqTable_min = new std::map<int,MyInteraction> [nodeNum];
-  
+  std::map<int,MyInteraction> *seqTable_pick = new std::map<int,MyInteraction> [nodeNum];
+  //define minimum network and its node edge
+  int *minNetwork = new int [nodeNum*nodeNum];
+  int *minInteractionNum = new int[nodeNum];
+
   MyInteraction seqTemp(nodeNum);
   std::string *filenames = genStrList(nodeNum,"_v1");
   std::ifstream inFile;
 
-  int temp,index;
+  int temp;
   for(int n = 0; n < nodeNum; ++n){
     inFile.open(filenames[n]);
     //read all possible network from file
@@ -61,33 +53,60 @@ void genNetwork(int nodeNum)
       seqTable[n].insert(std::unordered_multimap<int,MyInteraction>::value_type
 			 (seqTemp.getLength(),seqTemp));
     }
-    //read all min network from file
-    index = 0;
+    //read min network from file
     while(inFile>>temp){
       seqTemp.set(0,temp);
+      minNetwork[n*nodeNum] = temp;
       for(int i = 1; i < nodeNum; ++i){
 	inFile>>temp;
+	minNetwork[n*nodeNum+i] = temp;
 	seqTemp.set(i,temp);
       }
-      seqTable_min[n].insert(std::map<int,MyInteraction>::value_type
-			     (index,seqTemp));
-      index++;
+      minInteractionNum[n] = seqTemp.getLength();
     }
-    inFile.close();   
+    inFile.close();  
   }
 
-  //find the appropriate network.total_edge <= ?
-  for(int n = 0; n < 1; ++n){
-    auto its = seqTable[n].equal_range(5);
-    for (auto it = its.first; it != its.second; ++it)
-      std::cout<<it->second<<std::endl;
+  int enumnum = 0;
+  int *interactionNum = new int[nodeNum];
+  int *interactionCount = new int[nodeNum];
+  int countTemp;
+  inFile.open("all.txt");
+      
+  while(enumnum++ < 3){
+    for(int i = 0; i < nodeNum; ++i)
+      inFile>>interactionNum[i];
+    //find the appropriate network.total_edge <= ?
+    for(int n = 0; n < nodeNum; ++n){
+      countTemp = 0;
+      auto its = seqTable[n].equal_range(interactionNum[n]+minInteractionNum[n]);
+      for (auto it = its.first; it != its.second; ++it){
+	countTemp++;
+	seqTable_pick[n].insert(std::unordered_multimap<int,MyInteraction>::value_type
+				(countTemp,it->second));
+	//std::cout<<it->second<<std::endl;
+      }
+      if(countTemp == 0) break;
+      else interactionCount[n] = countTemp;
+    }
+    
+    //enum all possible network
+    if(countTemp != 0){
+      
+      std::cout<<"do something."<<std::endl;
+    }
+    //clear the table
+    for(int n = 0; n < nodeNum; ++n)
+      seqTable_pick[n].clear();
   }
-
+  inFile.close();
+  
   for(int i = 0; i < nodeNum; ++i){
     seqTable[i].clear();
-    seqTable_min[i].clear();
+    seqTable_pick[i].clear();
   }
-  
+  delete minInteractionNum;
+  delete interactionNum;
   
 }
 
