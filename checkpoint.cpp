@@ -206,9 +206,15 @@ double* calBD(int *network,int size)
   Sequence start_state(size,2);
   double *TF_B = new double [stateSum];
   double *TF_D = new double [stateSum];
-  
-  calDeltaBRec(stateNetwork,272,TF_B);
-  calDeltaDRec(stateNetwork,272,TF_D);
+  //initialization
+  for (int i = 0; i < stateSum; ++i)
+  {
+    TF_B[i] = 0;
+    TF_D[i] = 0;
+  }
+
+  calDeltaBRec(stateNetwork,76,TF_B); //!!!!!
+  calDeltaDRec(stateNetwork,76,TF_D);
   //statistics the checkpoint
   double *weight_b1 = new double[size];
   double *weight_b2 = new double[size];
@@ -217,6 +223,16 @@ double* calBD(int *network,int size)
   double *weight_d2 = new double[size];
   double *weight_d = new double[size];
 
+  //initialization
+  for (int i = 0; i < size; ++i)
+  {
+    weight_b1[i] = 0;
+    weight_b2[i] = 0;
+    weight_b[i] = 0;
+    weight_d1[i] = 0;
+    weight_d2[i] = 0;
+    weight_d[i] = 0;
+  }
   int state;
   //calculate the b
   start_state.reset();
@@ -320,9 +336,9 @@ void mainfunction(int *network,int *minNetwork,int size)
   }
   
   //print the result
-  // for(int i = 0; i < size; ++i){
-  //   std::cout<<std::setw(2)<<node_num[i]<<" "<<std::setw(10)<<bd[i]<<" "<<supp_node[i]<<std::endl;
-  // }
+  //for(int i = 0; i < size; ++i){
+   //std::cout<<std::setw(2)<<node_num[i]<<" "<<std::setw(10)<<bd[i]<<" "<<supp_node[i]<<std::endl;
+  //}
   //calculate the correlation
   double correlation = 0;
   double bd_total = 0;
@@ -337,8 +353,13 @@ void mainfunction(int *network,int *minNetwork,int size)
     correlation += (abs2(bd[i])/sqrt(bd_total)) * (supp_node[i]/sqrt(indegree_total));
     deviation += supp_node[i] * supp_node[i];
   }
-  if(indegree_total <= 16) std::cout<<sqrt(deviation)/indegree_total<<" "<<correlation<<std::endl;
+  //std::cout<<sqrt(deviation)/indegree_total<<" "<<correlation<<std::endl;
+  
+  std::cout<<bw.first<<" "<<correlation<<std::endl;
   //else std::cout<<0.1<<" "<<correlation<<std::endl;
+  delete supp_node;
+  delete node_num;
+  delete bd;
 }
 
 
@@ -346,28 +367,28 @@ void mainfunction(int *network,int *minNetwork,int size)
 
 
 
-int main(int argc,char * argv[])
-{
-  if (argc != 4) //quit if not input "filename" "size"
-  {
-    std::cerr<<"Usage: "<<argv[0]<<" fullnetwork "<<" min-network "<<" nodeSize "<<std::endl;
-    exit(EXIT_FAILURE);
-  }
-  int nodeNum = atoi(argv[3]);
-  std::clock_t c_start = std::clock();
+// int main(int argc,char * argv[])
+// {
+//   if (argc != 4) //quit if not input "filename" "size"
+//   {
+//     std::cerr<<"Usage: "<<argv[0]<<" fullnetwork "<<" min-network "<<" nodeSize "<<std::endl;
+//     exit(EXIT_FAILURE);
+//   }
+//   int nodeNum = atoi(argv[3]);
+//   std::clock_t c_start = std::clock();
   
-  // int *network = genMatrix(argv[1],nodeNum,nodeNum);
-  // int *minNetwork = genMatrix(argv[2],nodeNum,nodeNum);
+//   int *network = genMatrix(argv[1],nodeNum,nodeNum);
+//   int *minNetwork = genMatrix(argv[2],nodeNum,nodeNum);
 
-  // mainfunction(network,minNetwork,nodeNum);
-  int genNetNum = 1000;
-  std::string *filenames_full = genStrList(genNetNum,"_full");
-  std::string *filenames_min = genStrList(genNetNum,"_min");
-  for(int i = 0; i < genNetNum; ++i){
-    int *network = genMatrix(const_cast<char*>(filenames_full[i].c_str()),nodeNum,nodeNum);
-    int *minNetwork = genMatrix(const_cast<char*>(filenames_min[i].c_str()),nodeNum,nodeNum);
-    mainfunction(network,minNetwork,nodeNum);
-  }
-  std::clock_t c_end = std::clock();
-  std::cout<<"It costs : "<<(c_end-c_start)<<" ms."<<std::endl;
-}
+//   mainfunction(network,minNetwork,nodeNum);
+//   // int genNetNum = 1000;
+//   // std::string *filenames_full = genStrList(genNetNum,"_full");
+//   // std::string *filenames_min = genStrList(genNetNum,"_min");
+//   // for(int i = 0; i < genNetNum; ++i){
+//   //   int *network = genMatrix(const_cast<char*>(filenames_full[i].c_str()),nodeNum,nodeNum);
+//   //   int *minNetwork = genMatrix(const_cast<char*>(filenames_min[i].c_str()),nodeNum,nodeNum);
+//   //   mainfunction(network,minNetwork,nodeNum);
+//   // }
+//   // std::clock_t c_end = std::clock();
+//   // std::cout<<"It costs : "<<(c_end-c_start)<<" ms."<<std::endl;
+// }

@@ -22,6 +22,8 @@
 #include "../header/basicmatrix.h"
 #include "../header/basicsequence.h"
 #include "../header/helpfun.h"
+#include "../header/discretesequence.h"
+#include "../checkpoint.cpp"
 
 //generate some suitable network
 void genNetwork(int nodeNum)
@@ -33,6 +35,7 @@ void genNetwork(int nodeNum)
   std::map<int,MyInteraction> *seqTable_pick = new std::map<int,MyInteraction> [nodeNum];
   //define minimum network and its node edge
   int *minNetwork = new int [nodeNum*nodeNum];
+  int *fullNetwork = new int [nodeNum*nodeNum];
   int *minInteractionNum = new int[nodeNum];
 
   MyInteraction seqTemp(nodeNum);
@@ -71,19 +74,21 @@ void genNetwork(int nodeNum)
   int *interactionNum = new int[nodeNum];
   int *interactionCount = new int[nodeNum];
   int countTemp;
-  inFile.open("all.txt");
+  inFile.open("all1.txt");
       
-  while(enumnum++ < 3){
+  while(enumnum++ < 1){
+    //std::cout<<enumnum<<std::endl;
     for(int i = 0; i < nodeNum; ++i)
       inFile>>interactionNum[i];
     //find the appropriate network.total_edge <= ?
     for(int n = 0; n < nodeNum; ++n){
       countTemp = 0;
+      //std::cout<<"n="<<n<<std::endl;
       auto its = seqTable[n].equal_range(interactionNum[n]+minInteractionNum[n]);
       for (auto it = its.first; it != its.second; ++it){
 	countTemp++;
 	seqTable_pick[n].insert(std::unordered_multimap<int,MyInteraction>::value_type
-				(countTemp,it->second));
+				(countTemp-1,it->second));
 	//std::cout<<it->second<<std::endl;
       }
       if(countTemp == 0) break;
@@ -92,8 +97,23 @@ void genNetwork(int nodeNum)
     
     //enum all possible network
     if(countTemp != 0){
-      
-      std::cout<<"do something."<<std::endl;
+      countTemp = product(interactionCount,nodeNum);
+      DiscreteSequence seq(nodeNum,interactionCount);
+      //std::cout<<countTemp<<std::endl;
+      for(int i = 0; i < countTemp; ++i){
+	for(int n = 0; n < nodeNum; ++n){
+	  seqTemp = seqTable_pick[n][seq[n]];
+	  for(int j = 0; j < nodeNum; ++j)
+	    fullNetwork[n*nodeNum+j] = seqTemp[j];
+	}
+	//if(seq[1] == 7 && seq[2] == 7 && seq[3] == 7 && seq[5] == 55){
+	//if(i == 45456) prtMatrix(fullNetwork,nodeNum,nodeNum);
+	  //std::cout<<i<<std::endl;
+	//calculate the relation
+	mainfunction(fullNetwork,minNetwork,nodeNum);
+	//}
+	seq.nextSequence();
+      }     
     }
     //clear the table
     for(int n = 0; n < nodeNum; ++n)
@@ -106,8 +126,7 @@ void genNetwork(int nodeNum)
     seqTable_pick[i].clear();
   }
   delete minInteractionNum;
-  delete interactionNum;
-  
+  delete interactionNum; 
 }
 
 int main(int argc, char *argv[])

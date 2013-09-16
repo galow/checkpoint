@@ -11,6 +11,7 @@ this a 2 bit sequence with length 10
 #define DISCRETESEQUENCE_H_
 
 #include <iostream>
+#include <iomanip>
 
 class DiscreteSequence{
 protected:
@@ -19,7 +20,7 @@ protected:
   int *choice; //candidate's set size
   
   //set the s to next candidate,if it has carry return true
-  virtual bool nextCand(int & s);
+  virtual bool nextCand(int & p,int & s);
 public:
   DiscreteSequence(); //default constructor
   DiscreteSequence(int sl,int *c);
@@ -48,7 +49,6 @@ public:
 
 DiscreteSequence::DiscreteSequence(){ //a 0 sequence
   sequenceLength = 1;
-  setSize = 1;
   sequence = new int [sequenceLength];
   choice = new int[sequenceLength];
   sequence[0] = 0;
@@ -58,7 +58,7 @@ DiscreteSequence::DiscreteSequence(int sl,int *c){
   sequenceLength = sl;
   //create the sequence
   sequence = new int [sequenceLength];
-  choice = new int [sequenceLength]
+  choice = new int [sequenceLength];
   //initialize the quence
   for(int i = 0;i < sequenceLength;i++){
     sequence[i] = 0;
@@ -101,29 +101,29 @@ bool DiscreteSequence::nextCand(int & p,int & s){
 }
 
 
-void Sequence::reset(){
+void DiscreteSequence::reset(){
   for(int i = 0;i < sequenceLength;i++)
     sequence[i] = 0;
 }
 
-void Sequence::set(int position,int num){
-  if(num > choice[position] || num < 0 || position < 0 || position >= sequenceLength)
+void DiscreteSequence::set(int position,int num){
+  if(num >= choice[position] || num < 0 || position < 0 || position >= sequenceLength)
     std::cout<<"error:fail to change sequence"<<std::endl;
   else
     sequence[position] = num;
 }
 
-Sequence::operator int () const{
+DiscreteSequence::operator int () const{
   int integer = 0;
   for(int i = sequenceLength-1;i > 0;i--)
-    integer = (integer+sequence[i])*setSize; //can shift << 1
+    integer = (integer+sequence[i])*choice[i]; //can shift << 1
   integer += sequence[0];
   return integer;
 }
 
-void Sequence::nextSequence(){
+void DiscreteSequence::nextSequence(){
   int index = 0,carry;
-  do carry = nextCand(sequence[index]);
+  do carry = nextCand(index,sequence[index]);
   while(carry && ++index < sequenceLength);
 }
 

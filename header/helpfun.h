@@ -112,6 +112,7 @@ int *genRandNumList(int from ,int to,int count){
   return result;
 }
 
+//exchange two number
 template <typename T>
 void swap2(T& a,T& b){
   T temp;
@@ -120,10 +121,20 @@ void swap2(T& a,T& b){
   b = temp;
 }
 
+//get a abosolute number
 template <typename T>
 T abs2(T& a){
   if(a < 0.0) return -a;
   else return a;
+}
+
+//continue multiplication
+template <typename T>
+T product(T *all,int length){
+  T result = 1;
+  for (int i = 0; i < length; ++i)
+    result *= all[i];
+  return result;
 }
 
 #endif
